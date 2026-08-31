@@ -90,3 +90,58 @@ Measures how often your system is operational and accessible to users.
 ## High Availability Patterns
 
 ![](./images/ha-patterns.png)
+
+# Reliability
+
+A reliable system performs its intended function correctly and consistently, over a period of time, under specific conditions
+
+## vs related concepts
+
+**DRAFT**
+- **D**urability: is data preserved despite failures?
+- **R**eliability: response correct?
+- **A**vailability: is system responding?
+- **F**ault **T**o**lerance: does it work when components fail?
+
+> A payment system that charges customers twice is available (it processes requests) but unreliable (it processes them incorrectly). A database that loses writes during failover is fault-tolerant (it continues operating) but not durable (data was lost).
+
+## Measuring
+
+1. Mean Time B/n Failures (MTBF)
+
+- higher better
+- *MTBF = Total operating time / # of failures*
+
+2. Mean Time to Recover (MTTR)
+
+- how long it takes to restore the sys after failure
+- lower better
+- *MTTR = Total Downtime / # of failures*
+
+3. Error Rate
+
+- % of requests that result in errors
+- *Error rate = Failed req / Total req * 100*
+
+4. Data Correctness
+
+- % of responses that contain correct data
+- *Correctness = Correct resp / Total resp * 100*
+
+## Why systems become unrelaible
+
+Refer [Common Failure Modes](#common-failure-modes)
+
+## Key Principles of Reliable Systems
+
+1. Redundancy. Refer [Redundancy: Foundation of availability](#redundancy-foundation-of-availability)
+2. Failover Mechanisms: Like failing auto switching to a standby
+3. Load Balancing. already covered
+4. Monitoring and Alerting
+5. Graceful Degradation: Slowly reduce the funcionality of the system. Core things still work rather than going completely offline.
+
+## Techniques for Reliability
+
+1, 2, 3. All in [high availability patterns](#high-availability-patterns) - queue
+4. Graceful degradation: When parts of the system fail, graceful degradation keeps the core functionality working. Instead of complete failure, the system provides reduced service.
+5. Idempotency: Idempotent operations produce the same result regardless of how many times they are executed with the help of a idempotency token.
