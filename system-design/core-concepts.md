@@ -167,3 +167,58 @@ It can be a component, dependency, process or a decision point.
 5. Graceful Degradation
 6. Monitoring, Alerting and Runbooks
 7. Idempotency
+
+# Latency vs Throughput vs Bandwidth
+
+## Highway Analogy
+
+1. Bandwidth: # of lines on the highway
+2. Throughput: how many cars actually pass through per hour
+3. Latency: time taken by *one* car to go from A -> B
+
+## Latency
+
+- Time taken for a single request to travel from source to dest *and back*. Measures **delay**.
+- In networking its often called **Round Trip Time (RTT)**
+- Measured in percentile. p99 => 99% requests faster than this
+- Components: **PTPQ** - Propagation delay (light in fiber vs some med), Transmission delay (time to push bits into the wire), Processing Delay, Queuing Delay (time spent in waiting in buffers)
+
+### How to reduce latency
+
+- Use CDNs: serve content at the egde
+- Caching
+- Connection Pooling: avoid repeated connection setup
+- DB optimisation
+- Protocol optimization
+
+## Throughput
+
+- Amount of work completed per unit time. Measures **volume**.
+- For web systems, expressed in *Requests Per Second (RPS)* or *Transactions per Second (TPS)*
+- Calculating
+    - for single threaded: `Throughput = 1 / Latency`
+    - multi threaded: `Throughput = # of threads * 1 / Latency`
+- Limited by: CPU, Memory, I/O, Connections, Locks / Shared resources
+
+> Concurrency = Throughput * Latency (Little's Law)
+
+### How to improve
+
+1. Scaling: vertical and horizontal
+2. Async processing
+3. Batching
+4. Caching
+5. Connection Pooling
+6. Load Balancing 
+
+## Bandwidth
+
+- Max rate at which data can be transfered. Measures **Capacity**
+- Expressed in *Bits Per second (bps)*: Kbps, Mbps, Gbps
+- Types: Network, Memory, Disk, Bus
+- `Bandwidth Delay Product (BDP) = Bandwidth * Latency`. BDP measures how much data can in-flight at a moment.
+
+### Throughput vs Bandwidth
+
+- Bandwidth is the *theoretical max* capacity, while thorughput is the *actual acheived* rate. 
+- Throughput can never be higher than bandwidth.
