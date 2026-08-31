@@ -1,8 +1,10 @@
 # Scalability
 
-- The ability of a system to handle inreased load by adding resources.
-- Always identify the bottleneck first before deciding how to scale.
-- Common patterns like load balancing, caching, async processing, and database optimization appear in almost every scalable system.
+The ability of a system to handle inreased load by adding resources.
+
+Always identify the bottleneck first before deciding how to scale.
+
+Common patterns like load balancing, caching, async processing, and database optimization appear in almost every scalable system.
 
 
 - **Vertical Scaling (Scale Up)**: adding more power to existing machines, like CPU cores, RAM, faster SSDs, increase bandwidth
@@ -56,3 +58,35 @@ Strategies:
 - Decouple produces and consumers
 
 [**Example Scaling**](https://algomaster.io/learn/system-design/scalability#example-scaling-from-0-to-millions-of-users)
+
+----
+
+# Availability
+
+Measures how often your system is operational and accessible to users.
+
+> Availability is not the same as reliability. A system can be highly available (always up) but unreliable (sometimes gives wrong answers).
+
+## Measuring Availability
+
+- **Availability = Uptime / (Uptime + Downtime)**
+- Measured in nines - more nines, more availability
+
+## Availability in Series vs Parallel
+
+- **Series**: Availability multiplies. 99.99% App * 99.9% Web * 99.9% DB = *99.7%*
+- **Parallel**: Power of redundancy. Assume 9.9% for both server 1 and 2
+    - Failure probability = 0.1% * 0.1% = 0.001 * 0.001 = 0.000001 = **0.0001%**
+    - Availability = 100% - 0.0001%  = 99.9999%
+
+## Common Failure Modes
+
+![](./images/common-failure-modes.png)
+
+## Redundancy: Foundation of Availability
+
+![](./images/redundancy.png)
+
+## High Availability Patterns
+
+![](./images/ha-patterns.png)
