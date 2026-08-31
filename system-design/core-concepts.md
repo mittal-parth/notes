@@ -110,23 +110,23 @@ A reliable system performs its intended function correctly and consistently, ove
 1. Mean Time B/n Failures (MTBF)
 
 - higher better
-- *MTBF = Total operating time / # of failures*
+- `MTBF = Total operating time / # of failures`
 
 2. Mean Time to Recover (MTTR)
 
 - how long it takes to restore the sys after failure
 - lower better
-- *MTTR = Total Downtime / # of failures*
+- `MTTR = Total Downtime / # of failures`
 
 3. Error Rate
 
 - % of requests that result in errors
-- *Error rate = Failed req / Total req * 100*
+- `Error rate = Failed req / Total req * 100`
 
 4. Data Correctness
 
 - % of responses that contain correct data
-- *Correctness = Correct resp / Total resp * 100*
+- `Correctness = Correct resp / Total resp * 100`
 
 ## Why systems become unrelaible
 
@@ -142,6 +142,28 @@ Refer [Common Failure Modes](#common-failure-modes)
 
 ## Techniques for Reliability
 
-1, 2, 3. All in [high availability patterns](#high-availability-patterns) - queue
+1. (1, 2, 3) All in [high availability patterns](#high-availability-patterns) minus queue
 4. Graceful degradation: When parts of the system fail, graceful degradation keeps the core functionality working. Instead of complete failure, the system provides reduced service.
 5. Idempotency: Idempotent operations produce the same result regardless of how many times they are executed with the help of a idempotency token.
+
+# Single Point of Failure
+
+A component is a SPOF if: 
+
+1. a critical path depends on it
+2. there is no alternative when it failks
+3. failure causes unacceptable impact
+
+It can be a component, dependency, process or a decision point.
+
+## Strategies to reduce SPOF
+
+[Key principles of Reliable Systems](#key-principles-of-reliable-systems) + [Techniques for reliability](#techniques-for-reliability)
+
+1. Redundancy
+2. Load Balancing
+3. Data Replication with Backups
+4. Circuit breakers
+5. Graceful Degradation
+6. Monitoring, Alerting and Runbooks
+7. Idempotency
