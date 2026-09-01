@@ -222,3 +222,19 @@ It can be a component, dependency, process or a decision point.
 
 - Bandwidth is the *theoretical max* capacity, while thorughput is the *actual acheived* rate. 
 - Throughput can never be higher than bandwidth.
+
+# Failover
+
+Failover is the ability to switch _automatically_ and seamlessly to a reliable backup system.
+
+A heartbeat connects two or more servers. As long as the heartbeat receives pulse, it only rests.
+When it notices a problem, it switches to the backup server and act as the new primary, while also notifying to fix the primary.
+
+## Types
+
+Refer [Active-Active and Active-Passive](#redundancy-foundation-of-availability)
+
+## Failover vs Failback
+
+- Failover is the process of switching ops to a backup system during failure
+- Failback is about returning ops to the original system after recovery
