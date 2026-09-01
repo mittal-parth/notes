@@ -238,3 +238,20 @@ Refer [Active-Active and Active-Passive](#redundancy-foundation-of-availability)
 
 - Failover is the process of switching ops to a backup system during failure
 - Failback is about returning ops to the original system after recovery
+
+# Fault Tolerance
+
+Ability of the system to handle outages / errors without any loss of functionality.
+
+## Fault Tolerance Goals
+
+- Normal functioning vs [graceful degradation](#key-principles-of-reliable-systems)
+- Setting survival goals:
+    - Surivive node failure:
+    - Surive AD failure:
+    - Survive region failure
+    - Survive cloud provider failure
+
+## Acheiving FT
+
+Refer [HA patterns](#high-availability-patterns)
