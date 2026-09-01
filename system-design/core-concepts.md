@@ -255,3 +255,11 @@ Ability of the system to handle outages / errors without any loss of functionali
 ## Acheiving FT
 
 Refer [HA patterns](#high-availability-patterns)
+
+# CAP Theorem
+
+When a distributed system is partitioned, it cannot provide both strong consistency as well as full availability for affected operations.
+
+- **Consistency**: Every read observes the latest write or the system returns an error instead of stale data
+- **Availability**: For every request to a non-failing node, a non-error response is returned.
+- **Partition tolerance**: The system continues to behave acc to the design even when msgs b/wn nodes are delayed or dropped.
