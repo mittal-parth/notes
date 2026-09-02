@@ -38,3 +38,25 @@ An API (Application Programming Interface) is that agreed way of talking. It tel
 - Retries: repeat when safe
 - Idempotency
 
+# API Gateway
+
+An API Gateway acts as a central server that sits between clients and internal backend services.
+
+Instead of clients interacting with multiple microservices, they send it to a common API gateway.
+Internally, it helps in centralizing these tasks, eliminating the need for each individual service to do so.
+
+## Core features of an API Gateway
+
+Typical flow:
+
+Request reception -> Validation -> Auth and AuthZ -> Rate Limiting -> Req Transformation -> Service discovery + Load Balancing -> Response handling / transformation + Caching -> Logging & Monitoring
+
+1. Auth and AuthZ
+2. Rate Limiting
+3. Load Balancing
+4. Caching
+5. Request Transformation: modify structure of incoming req to match backend requirement, similarly with responses on the other side.
+6. Service discovery: identifying correct backend service to route the req to.
+7. _Circuit Breaking_
+8. Logging and Monitoring
+
