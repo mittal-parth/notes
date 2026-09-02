@@ -60,3 +60,11 @@ Request reception -> Validation -> Auth and AuthZ -> Rate Limiting -> Req Transf
 7. _Circuit Breaking_
 8. Logging and Monitoring
 
+# REST vs GraphQL
+
+| | REST | GraphQL |
+|---|---|---|
+| **Overview** | At its core, REST is built around resources. Each resource (such as a user, order, or product) is uniquely identified by a URL (Uniform Resource Locator), and clients interact with these resources using a fixed set of HTTP methods. | Unlike REST, which organizes APIs around fixed endpoints and HTTP methods, GraphQL is a **query language** that allows clients to request exactly the data they need — nothing more, nothing less. The client decides what to fetch, making it more flexible. |
+| **Core functionalities** | <ul><li>Resources identified by URLs</li><li>Clients interact via a fixed set of HTTP methods</li></ul> | <ul><li><strong>Queries</strong>: fetch data</li><li><strong>Mutations</strong>: modify data</li><li><strong>Subscriptions</strong>: real-time updates</li></ul> |
+| **Benefits** | <ul><li>Simplicity</li><li>Statelessness</li><li>Cacheability</li><li>Scalability</li><li>Good ecosystem</li></ul> | <ul><li>Solves over- and under-fetching</li><li>Single request for multiple resources, <em>solving the N+1 problem</em></li><li>Strong typing</li><li>No versioning</li><li>Real-time data with subscriptions supported natively</li></ul> |
+| **Drawbacks** | <ul><li>Over-fetching: you may need only the profile email but it returns much more data, leading to wastage of bandwidth</li><li>Under-fetching: to get desired data, you might need to make multiple calls</li><li>Versioning is hard to maintain</li></ul> | <ul><li>Complex setup and tooling</li><li>Caching challenges — REST APIs leverage HTTP caching but GraphQL queries use POST requests, making caching trickier</li><li>Increased server load, as it is up to the client now</li><li>Security/performance risks: inefficient queries lead to risk of DDoS</li></ul> |
