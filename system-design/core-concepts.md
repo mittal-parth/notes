@@ -263,3 +263,48 @@ When a distributed system is partitioned, it cannot provide both strong consiste
 - **Consistency**: Every read observes the latest write or the system returns an error instead of stale data
 - **Availability**: For every request to a non-failing node, a non-error response is returned.
 - **Partition tolerance**: The system continues to behave acc to the design even when msgs b/wn nodes are delayed or dropped.
+
+CAP is about replicated data under network failure.
+
+Imagine a product service replicated across two regions. A user changes the price of a product in Region A. Before Region B receives the update, the network link between the regions fails.
+Now a client in Region B asks for the product price.
+
+System has two options: 
+
+1. Return a stale response
+2. Reject and throw an error
+
+## CP, AP and CA
+
+### CP: Consistency + Partition Tolerance
+
+- Preservers strong consistency during a partition by refusing ops that are not safe.
+- Can be done by: 
+    - rejecting writes on the minoriy side
+    - rejecting reads from replicas that cannot prove freshness or require a quorum before committing
+- Examples of such systems: payment authorization, scarce inventory updates, locks, leases, etc
+
+
+### AP: Availability + Partition Tolerance
+
+- Opp of above. allow reachable replicas to continue serving requests.
+- Stale reads ok, en-queue replication.
+- They require stale-read handling, conflict resolution, and reconciliation.
+- Examples: cached assets, CDN metadata, shopping carts, likes, views, reactions, DNS records during propagation
+
+### CA: Consistency + Availability
+
+- Possible when there are no partitions
+- Possible in single node systems. Rare in distributed systems.
+
+Real systems rarely fit cleanly into one label.
+The better question is to ask which operation. Diff operations of a system might be CP and AP.
+
+## CAP and Latency
+
+- CAP only talks about what happens during partitions. Most systems spend most of their time outside full partitions, where the daily trade-off is usually consistency versus latency.
+- That is why **PACELC** is useful: 
+    - If there is a partition (P), choose between availability (A) and consistency (C).
+    Else (E), choose between latency (L) and consistency (C).
+- Serving from cache is faster, querying a vector index is faster than rebuilding embeddings synchrounously after every doc update.
+- CAP explains the hard limit under partition. PACELC explains why consistency still costs latency when the network is healthy.
