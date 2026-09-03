@@ -68,3 +68,10 @@ Request reception -> Validation -> Auth and AuthZ -> Rate Limiting -> Req Transf
 | **Core functionalities** | <ul><li>Resources identified by URLs</li><li>Clients interact via a fixed set of HTTP methods</li></ul> | <ul><li><strong>Queries</strong>: fetch data</li><li><strong>Mutations</strong>: modify data</li><li><strong>Subscriptions</strong>: real-time updates</li></ul> |
 | **Benefits** | <ul><li>Simplicity</li><li>Statelessness</li><li>Cacheability</li><li>Scalability</li><li>Good ecosystem</li></ul> | <ul><li>Solves over- and under-fetching</li><li>Single request for multiple resources, <em>solving the N+1 problem</em></li><li>Strong typing</li><li>No versioning</li><li>Real-time data with subscriptions supported natively</li></ul> |
 | **Drawbacks** | <ul><li>Over-fetching: you may need only the profile email but it returns much more data, leading to wastage of bandwidth</li><li>Under-fetching: to get desired data, you might need to make multiple calls</li><li>Versioning is hard to maintain</li></ul> | <ul><li>Complex setup and tooling</li><li>Caching challenges — REST APIs leverage HTTP caching but GraphQL queries use POST requests, making caching trickier</li><li>Increased server load, as it is up to the client now</li><li>Security/performance risks: inefficient queries lead to risk of DDoS</li></ul> |
+
+# Websockets
+
+Bidirectional, full-duplex comm b/wn a client and a server over a single TCP connection. 
+Allows both client and server to send messages to each other independently and continously after the connection is established.
+
+![](./images/websockets.png)
