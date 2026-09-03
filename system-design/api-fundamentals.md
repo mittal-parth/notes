@@ -75,3 +75,88 @@ Bidirectional, full-duplex comm b/wn a client and a server over a single TCP con
 Allows both client and server to send messages to each other independently and continously after the connection is established.
 
 ![](./images/websockets.png)
+
+# Webhooks
+
+An HTTP Request that one system sends to another when something happens.
+
+Sending system called provider while receiving called consumer / receiver.
+
+- Push based integration pattern.
+- Useful when the system needs to react to a change that happens in _another system_.
+- Examples: `payment_intent.suceeded`, `pull_request.opened`
+
+## How they work
+
+![](./images/webhooks.png)
+
+## Anatomy
+
+1. Request Headers
+
+- carry delivery and security deets.
+- varies by provider.
+
+2. Request Body
+
+- contains the event type, resource data
+
+## Building a Webhook receiver
+
+1. Dedicated endpoint
+
+- Have a separate endpoint for each provider
+- Each can have different signature rules, headers, body etc
+- Accept only expected HTTP method and content type
+
+2. Verify before parsing business data
+
+- Verify the signature (usually HMAC) before trusting the body. Provider creates a signature from the request body and a shared secret. Receiver creates the same signature and compares it with the signaure header.
+- Use contant time comparision so timing diff does not leak the secret
+- Include timestamps when supported to reduce replay risk
+- Store secrets in a secret manager and rotate them
+
+3. Make processing idempotent
+
+- Assume duplicates as most providers use _at-least-once delivery_
+- Store the eventID, deliveryID, or similar to identify duplicates.
+
+4. Don't depend on delivery order
+
+- Events can come in random order.
+- Fetch latest resource state from provider instead of trusting event alone before making an imp change.
+- versioning and timestamps
+
+5. Return the right status code
+
+- Usually 2xx. may vary.
+
+## Designing a Scalable Webhook Infra
+
+Very similar to Echo. Already employed these techniques there.
+
+1. Keep Receving fast
+
+- reciever endpoint should verify signature, validate event shpae, check for duplicates, save the raw event, enqueue a processing job _in the same txn_ & return a 2xx.
+- Don't do extensive business logic here - queue should handle that.
+- Dont return without saving event.
+- Examples for queues: RabbitMQ, Kafka, pg-boss
+
+2. Store events
+
+- Useful for audit and replay
+
+3. Process with workers
+
+- perform actual business logic here. db udpates, calling other services, sending notifs etc.
+
+4. Retry with backoff and jitter
+
+5. Use a dead letter queue
+
+- Put the failed events into a dead letter queue instead of discarding them after multiple failed attempts
+- Reconcile later.
+
+6. Add observaliblity
+
+- Logging and monitoring
