@@ -228,3 +228,11 @@ Lifecycle:
 2. Completed
     - When an operation completes, owner updates `status = completed`, stores the `response_status` and `response_body` and sets `completed_at`.
     - A later request sees the status `completed` and returns the stored response directly.
+
+# Rate Limiting
+
+Rate limits protect the API from overload and abuse from a single client or user.
+
+## Rate Limiting Algorithms
+
+![](./images/rate-limiting.png)
