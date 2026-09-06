@@ -160,3 +160,71 @@ Very similar to Echo. Already employed these techniques there.
 6. Add observability
 
 - Logging and monitoring
+
+# Idempotency
+
+An operation is idempotent when running it multiple times has the same intended effect as running it once.
+
+It makes retries safe. It is about the effect and not identical responses.
+
+- **Natural Idempotency**: 
+    - Some operations are naturally idempotent as they set a final state.
+    - Eg: Updating a user's status, deleting a user.
+- **Engineered Idempotency**:
+    - These operations change the value or create something new each time.
+    - Eg: Incrementing values.
+    - Solution: Use a stable _operation id_ while executing the operation and use it to detect duplicates.
+    
+    ```sql
+    INSERT INTO inventory_changes (operation_id, item_id, delta)
+    VALUES ('shipment_789', 1, 10)
+    ON CONFLICT (operation_id) DO NOTHING;
+    ```
+
+## Idempotency Keys
+
+A stable ID for one logical operation.
+
+An operation must reuse the same key on every retry.
+
+Good keys are: 
+- Client generated
+- Stable across retries
+- Unique for different operations
+- Scoped: scope keys by tenant, caller, endpoint or operation type to avoid conflicts.
+- Bound to the request: Server rejects the same key if the request body changes. Use a request hash for the same.
+- Stored durably: key survives restarts and failover.
+
+## Server-side implementation
+
+### Storage
+
+Store in a durable storage like a DB and have these properties / columns at least: 
+
+- Scope: Prevents accidental collisions across endpoints
+- Request Hash: To reject same key + different request body
+- Status: Tracks whether its the first request, a completed retry or running request
+
+### Request Flow
+
+![](./images/idempotency-flow.png)
+
+### Status and Lock Lifecycle
+
+Columns: `status` and `locked_until`
+
+Lifecycle: 
+
+1. In progress:
+    - A successful insert sets the `status = in_progress` and `locked_until = now() + timeout`.
+    - This claims the operation for the request
+    - `locked_until` claims a lease which means "this request owns the work until this time".
+    - Why lease?
+        - Useful in a scenario where the owner crashes after reserving the key but before finishing the operation.
+        - In such a case, every new request will return in progress forever.
+        - When a duplicate finds an `in_progress` record, it check the lease: 
+            - if `locked_until` is in the future, still running
+            - if `locked_until` is in the past, the duplicate claims the lease by extending `locked_until` and runs the operation
+2. Completed
+    - When an operation completes, owner updates `status = completed`, stores the `response_status` and `response_body` and sets `completed_at`.
+    - A later request sees the status `completed` and returns the stored response directly.
