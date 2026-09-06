@@ -1,6 +1,6 @@
 # Scalability
 
-The ability of a system to handle inreased load by adding resources.
+The ability of a system to handle increased load by adding resources.
 
 Always identify the bottleneck first before deciding how to scale.
 
@@ -8,7 +8,7 @@ Common patterns like load balancing, caching, async processing, and database opt
 
 
 - **Vertical Scaling (Scale Up)**: adding more power to existing machines, like CPU cores, RAM, faster SSDs, increase bandwidth
-    - Pros: simple, no architecure change, lower latency since everything local; no hops, no distributed complexity
+    - Pros: simple, no architecture change, lower latency since everything local; no hops, no distributed complexity
     - Cons: hardware limits, SPF, cost, downtime during upgrades
 
 - **Horizontal Scaling (Scale Out)**: adding more machines, distribute the load
@@ -23,7 +23,7 @@ Common patterns like load balancing, caching, async processing, and database opt
 How to make service stateless?
 
 1. Store session data in a shared cache 
-2. Use JWT isntead of service side sessions
+2. Use JWT instead of service side sessions
 3. Store files in object storage instead of local disk
 
 ## Scaling Components 
@@ -48,12 +48,12 @@ Generally the hardest bcz gotta maintain ACID, cant simply put a load balancer i
 
 Strategies:
 - Redis Cluster: automatic partitioning using hash slots
-- Consistent Hashing: distibutes keys evenly and minimizes when redistribution when nodes are added or removed
+- Consistent Hashing: distributes keys evenly and minimizes when redistribution when nodes are added or removed
 - Cache-aside pattern: data checked in cache, not found (cache miss), go to DB, store in cache
 
 ### Message Queue Tier
 
-- Async Workfloads
+- Async Workloads
 - Buffer traffic spikes so consumers can process at their own pace
 - Decouple produces and consumers
 
@@ -128,7 +128,7 @@ A reliable system performs its intended function correctly and consistently, ove
 - % of responses that contain correct data
 - `Correctness = Correct resp / Total resp * 100`
 
-## Why systems become unrelaible
+## Why systems become unreliable
 
 Refer [Common Failure Modes](#common-failure-modes)
 
@@ -138,7 +138,7 @@ Refer [Common Failure Modes](#common-failure-modes)
 2. Failover Mechanisms: Like failing auto switching to a standby
 3. Load Balancing. already covered
 4. Monitoring and Alerting
-5. Graceful Degradation: Slowly reduce the funcionality of the system. Core things still work rather than going completely offline.
+5. Graceful Degradation: Slowly reduce the functionality of the system. Core things still work rather than going completely offline.
 
 ## Techniques for Reliability
 
@@ -151,7 +151,7 @@ Refer [Common Failure Modes](#common-failure-modes)
 A component is a SPOF if: 
 
 1. a critical path depends on it
-2. there is no alternative when it failks
+2. there is no alternative when it fails
 3. failure causes unacceptable impact
 
 It can be a component, dependency, process or a decision point.
@@ -185,10 +185,10 @@ It can be a component, dependency, process or a decision point.
 
 ### How to reduce latency
 
-- Use CDNs: serve content at the egde
+- Use CDNs: serve content at the edge
 - Caching
 - Connection Pooling: avoid repeated connection setup
-- DB optimisation
+- DB optimization
 - Protocol optimization
 
 ## Throughput
@@ -213,14 +213,14 @@ It can be a component, dependency, process or a decision point.
 
 ## Bandwidth
 
-- Max rate at which data can be transfered. Measures **Capacity**
+- Max rate at which data can be transferred. Measures **Capacity**
 - Expressed in *Bits Per second (bps)*: Kbps, Mbps, Gbps
 - Types: Network, Memory, Disk, Bus
 - `Bandwidth Delay Product (BDP) = Bandwidth * Latency`. BDP measures how much data can in-flight at a moment.
 
 ### Throughput vs Bandwidth
 
-- Bandwidth is the *theoretical max* capacity, while thorughput is the *actual acheived* rate. 
+- Bandwidth is the *theoretical max* capacity, while throughput is the *actual acheived* rate. 
 - Throughput can never be higher than bandwidth.
 
 # Failover
@@ -247,12 +247,12 @@ Ability of the system to handle outages / errors without any loss of functionali
 
 - Normal functioning vs [graceful degradation](#key-principles-of-reliable-systems)
 - Setting survival goals:
-    - Surivive node failure:
-    - Surive AD failure:
+    - Survive node failure:
+    - Survive AD failure:
     - Survive region failure
     - Survive cloud provider failure
 
-## Acheiving FT
+## Achieving FT
 
 Refer [HA patterns](#high-availability-patterns)
 
@@ -280,7 +280,7 @@ System has two options:
 
 - Preservers strong consistency during a partition by refusing ops that are not safe.
 - Can be done by: 
-    - rejecting writes on the minoriy side
+    - rejecting writes on the minority side
     - rejecting reads from replicas that cannot prove freshness or require a quorum before committing
 - Examples of such systems: payment authorization, scarce inventory updates, locks, leases, etc
 
@@ -306,5 +306,5 @@ The better question is to ask which operation. Diff operations of a system might
 - That is why **PACELC** is useful: 
     - If there is a partition (P), choose between availability (A) and consistency (C).
     Else (E), choose between latency (L) and consistency (C).
-- Serving from cache is faster, querying a vector index is faster than rebuilding embeddings synchrounously after every doc update.
+- Serving from cache is faster, querying a vector index is faster than rebuilding embeddings synchronously after every doc update.
 - CAP explains the hard limit under partition. PACELC explains why consistency still costs latency when the network is healthy.

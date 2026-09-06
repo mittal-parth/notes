@@ -72,7 +72,7 @@ Request reception -> Validation -> Auth and AuthZ -> Rate Limiting -> Req Transf
 # Websockets
 
 Bidirectional, full-duplex comm b/wn a client and a server over a single TCP connection. 
-Allows both client and server to send messages to each other independently and continously after the connection is established.
+Allows both client and server to send messages to each other independently and continuously after the connection is established.
 
 ![](./images/websockets.png)
 
@@ -94,7 +94,7 @@ Sending system called provider while receiving called consumer / receiver.
 
 1. Request Headers
 
-- carry delivery and security deets.
+- carry delivery and security details.
 - varies by provider.
 
 2. Request Body
@@ -111,8 +111,8 @@ Sending system called provider while receiving called consumer / receiver.
 
 2. Verify before parsing business data
 
-- Verify the signature (usually HMAC) before trusting the body. Provider creates a signature from the request body and a shared secret. Receiver creates the same signature and compares it with the signaure header.
-- Use contant time comparision so timing diff does not leak the secret
+- Verify the signature (usually HMAC) before trusting the body. Provider creates a signature from the request body and a shared secret. Receiver creates the same signature and compares it with the signature header.
+- Use constant time comparison so timing diff does not leak the secret
 - Include timestamps when supported to reduce replay risk
 - Store secrets in a secret manager and rotate them
 
@@ -135,11 +135,11 @@ Sending system called provider while receiving called consumer / receiver.
 
 Very similar to Echo. Already employed these techniques there.
 
-1. Keep Receving fast
+1. Keep Receiving fast
 
-- reciever endpoint should verify signature, validate event shpae, check for duplicates, save the raw event, enqueue a processing job _in the same txn_ & return a 2xx.
+- receiver endpoint should verify signature, validate event shape, check for duplicates, save the raw event, enqueue a processing job _in the same txn_ & return a 2xx.
 - Don't do extensive business logic here - queue should handle that.
-- Dont return without saving event.
+- Don't return without saving event.
 - Examples for queues: RabbitMQ, Kafka, pg-boss
 
 2. Store events
@@ -148,7 +148,7 @@ Very similar to Echo. Already employed these techniques there.
 
 3. Process with workers
 
-- perform actual business logic here. db udpates, calling other services, sending notifs etc.
+- perform actual business logic here. db updates, calling other services, sending notifs etc.
 
 4. Retry with backoff and jitter
 
@@ -157,6 +157,6 @@ Very similar to Echo. Already employed these techniques there.
 - Put the failed events into a dead letter queue instead of discarding them after multiple failed attempts
 - Reconcile later.
 
-6. Add observaliblity
+6. Add observability
 
 - Logging and monitoring
