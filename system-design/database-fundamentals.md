@@ -47,3 +47,32 @@ DB use common techniques to enforce isolation:
 
 - Once committed, the DB can recover the older state after a crash.
 - Write-Ahead Logging (WAL): Write the recovery record before relying on the changed data page. If the database crashes after commit but before the changed pages reach the main files, recovery can replay the WAL and restore the committed changes.
+
+# SQL vs NoSQL
+
+| Question         | SQL / Relational                                | NoSQL                                        |
+|------------------|-------------------------------------------------|----------------------------------------------|
+| Primary Model    | Tables, rows, columns, relationships            | Key-value, document, graph, time-series, wide-column |
+| Query style      | SQL; describe the result you want               | Database-specific API or query language      |
+| Schema           | Enforced by DB                                  | Flexible or query shaped                     |
+| Relationships    | Joins, foreign keys                             | Embedded, duplicated, traversed, or handled by application code |
+| Transactions     | Strong general purpose txn support              | Varies widely by DB                         |
+| Scaling model    | Vertical, replicas, partitions, sharding        | Horizontal                                  |
+
+## How to choose
+
+Choose relational DB if:
+
+- Data relationships matter
+- Txns
+- Good starting point
+- Query patterns will evolve
+- Data quality matters
+
+Choose no sql if:
+
+- Data model matches the db (like graph)
+- Read and write pattern is clear
+- Flexible records are useful
+- Limited txn is acceptable 
+- Horizontal scale is a first order requirement
