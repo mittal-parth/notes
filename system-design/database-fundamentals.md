@@ -76,3 +76,48 @@ Choose no sql if:
 - Flexible records are useful
 - Limited txn is acceptable 
 - Horizontal scale is a first order requirement
+
+
+# Data Replication
+
+- The process of keeping copies of the same data across multiple locations
+
+## How does it work
+
+- Works by synchronizing changes from a primary data source to one or more replica destinations
+- primary handles write operations, logs those changes and then those changes are propagated to replica nodes
+- 3 stages: 
+    1. Establishing an initial state - full snapshot or baseline copy of primary db
+    2. Ongoing changes are captured by reading txn logs, monitoring timestamps on updated records or using DB triggers
+    3. Apply changes to each replica
+
+- Most common technique: CDC (Change Data Capture)
+    - Reads db txn logs, applies changes with minimal impact on primary, order of txns preserved
+- If the connection breaks between primary and replica, partial resync is applied 
+
+## Benefits
+
+1. DR and reliability
+    - Metrics that define reliability: 
+      1. Recovery Point Objective: how much data loss is acceptable
+      2. Recovery Time Objective: how long the system can be offline
+2. Increased performance: many read replicas can distribute traffic
+
+## Types
+
+> Based on timing: async, sync and semi-sync: Discussed in [High Availability Patterns](./core-concepts.md#high-availability-patterns)
+
+1. Transactional: Begins with a full snapshot of the primary and then pushes realtime updates in exact order
+2. Snapshot: Takes a _static_, point-in-time copy of a DB and sends the entire state to the replica nodes. Its like a periodic refresh.
+3. Merge: Allows bidirectional updates where both publisher and subscriber can modify data, periodically merging changes and resolving conflicts. Its like hub and spoke model.
+4. Master-Slave (Single Leader): One write accepting DB, rest are read-only where updates are pushed from master
+5. Multi-Master (Multi Leader): Allows two or more masters to accept writes simultaneously, syncing changes across all masters.  
+6. Peer to Peer replication: All servers are equal, handling both reads and writes.
+7. Key-based / Incremental Replication: Tracks changes using a unique identifier and copies only those. Eg: CDC
+
+## Challenges
+
+1. Infra cost
+2. Replication lag
+3. Conflict Resolution: mainly when multiple nodes can accept writes and may update the same record. Use last-write-wins policies and CRDTs (Conflict-free Replicated Data Types) that merge concurrent changes
+4. Bandwidth consumption: use log based CDC to reduce and send only incremental
