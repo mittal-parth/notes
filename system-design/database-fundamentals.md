@@ -121,3 +121,12 @@ Choose no sql if:
 2. Replication lag
 3. Conflict Resolution: mainly when multiple nodes can accept writes and may update the same record. Use last-write-wins policies and CRDTs (Conflict-free Replicated Data Types) that merge concurrent changes
 4. Bandwidth consumption: use log based CDC to reduce and send only incremental
+
+# Database Architectures
+
+1. 1-Tier: users works directly with the DB on the same system. Simple, cost effective but single-user, poor security
+2. 2-Tier: client server. client application talks directly to the DB server
+3. 3-Tier: Typical web architecture. Also similar to the ANSI-SPARC 3-Level schema
+    - presentation layer (tier-1): user interface /client
+    - business layer (tier-2): controller
+    - DB layer (tier-3): physical data storage
