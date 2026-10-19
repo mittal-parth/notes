@@ -1,8 +1,7 @@
 # Caching
 
-- A cache is a fast storage layer that keeps copies of frequently used data.
+- Caching is used to temporarily store copies of frequently accessed data in high-speed storage layers (such as RAM) to reduce latency and load on the server or database.
 - We know how its used and what is cache hit or miss, not covering
-- Why use? Reduced latency, reduced load and higher throughput 
 
 ## Caching Layers
 
@@ -118,7 +117,7 @@ Cons:
     - First read slow
     - not good for read-after-write workloads
 
-## Cache Eviction Strategies
+# Cache Eviction Strategies
 
 1. Least Recently Used (LRU)
 
@@ -221,3 +220,43 @@ Cons:
     - Complexity, sync issues
     - Network Overhead
     - Stale data with inconsistent updates
+
+# Distributed Caching
+
+- Storing cache data across multiple nodes
+- Why?
+    - Scalability
+    - Fault tolerance
+    - Load balancing
+
+- Popular solutions: Redis (OSS), Memcached (OSS), Amazon ElastiCache
+
+## Components
+
+1. Cache Nodes: individual server where data stored
+2. Client Library: S/W that takes to the cache nodes, handling connections, and retrieval
+3. Consistent Hashing: spreads data evenly across nodes, adding or removing nodes should have minimal impact
+4. Sharding
+5. Replication
+6. Cache Eviction Policies: discussed above
+7. Coordination and Sync: distributed locks or consensus protocols 
+
+## Where to host the cache
+
+1. Dedicated Cache Servers: Independent, isolated, VMs that are optimized for caching and are separate from the application server. Scalable, resource isolation but expensive, network hop
+2. Co-located cache: Running the cache and application on the same server. Cheaper, faster, but less scalable and resource contention (app and cache use same system resources).
+
+## How does it work
+
+1. Data Distribution: Client library hashes the key to determine which node will store it
+2. Replication
+3. Data Access: Application provides key -> client library finds and queries the node -> cache hit or miss and return to application
+4. Cache Invalidation: TTL or event based
+5. Cache Eviction
+
+## Challenges
+
+1. Scalability and Load Balancing
+2. Data Consistency
+3. N/W partitioning (cache nodes unable to talk to each other)
+4. Cache Invalidation can be tricky
