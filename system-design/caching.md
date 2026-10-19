@@ -46,6 +46,77 @@
 - Expensive reads or computation
 - Repeated access to the same data
 
+# Caching Strategies 
+
+1. Cache-Aside
+
+- Application manages the cache explicitly
+- Usual cache hit and miss: application checks cache, if present (cache hit), return. If not present (cache miss), application checks DB, stores it in cache and returns.
+- Also called lazy loading because cache is only populated when someone requests it
+- During write, update DB and delete the cache entry. One could update the cache value also but that can being sync issues so simple delete. Next cache miss will re-populate.
+- Advgs: 
+    - Only requested data gets cached
+    - Cache is optional (read from DB will still succeed)
+    - Works with any key-value store
+- Disadvgs: 
+    - Stale data is possible if cache invalidation is delayed
+    - First request is slower
+    - Caching logic handled by the application
+- Best for read heavy systems
+
+2. Read-Through
+
+- If value already cached, return. If not, the cache layer itself fetches it from the DB, stores it and returns.
+- Application does not implement the cache-miss logic, simply asks for data from cache.
+- Advgs: 
+    - Cleaner application code
+    - One shared loading path for many services
+    - Only requested data gets cached
+
+- Disadvgs: 
+    - Requires a caching system that knows how to read from the underlying DB
+    - First request is slower
+
+3. Write-Through
+
+- Every write goes through the cache and the cache then updates the DB. 
+- Write is considered successful only if the DB has also been updated.
+- If another request reads the same data afterward, it can be served from the cache directly.
+- All writes must use the same cache path however.
+- Advgs: 
+    - good for systems where read follows a write
+- Disadvgs: 
+    - can fill up cache with data that is never accessed
+    - slower writes
+    
+Best for workloads where reads commonly follow writes and slower writes are acceptable
+
+4. Write-Behind
+
+- Similar to Write-Through but here we don't wait for the DB to acknowledge the update during write
+- The database update happens asynchronously later.
+
+Advgs: 
+    - Faster writes
+    - Improved performance as the cache no longer waits for DB update
+
+Disadvgs: 
+    - Durability: The cache server fails after accepting the update but before updating the DB. If this was in volatile memory, then it will be lost.
+    - the background writer has to handle ordering, retries and duplicate writes.
+    - consistency delay between cache and DB
+
+Best where high write throughput is needed and some delay between cache and DB is acceptable
+
+5. Write-Around
+
+- Basically the write strategy when you'd think of cache-aside.
+- Write data directly to DB, delete existing cache entry. Read with a cache miss populates the cache. Cache hit reads directly from cache.
+
+Advgs: 
+    - Only requested data gets cached
+Disadvgs: 
+    - First read slow
+    - not good for read-after-write workloads
 
 
 
