@@ -260,3 +260,44 @@ Cons:
 2. Data Consistency
 3. N/W partitioning (cache nodes unable to talk to each other)
 4. Cache Invalidation can be tricky
+
+# Content Delivery Network (CDN)
+
+A distributed network of servers that caches content closer to users.
+
+- Edge locations: CDN servers deployed in geographic locations closer to the users. Also called Points of Presence (PoPs)
+- Origin Server: the authoritative source from which the CDN retrieves its content. Could be an application server, object storage service or another backend system.
+- Working of a CDN is similar to a normal cache. User -> nearby CDN server -> return if present (cache hit), otherwise ask origin server (cache miss), cache and return.
+- Commonly cache static content like media, stylesheets, fonts, etc that don't change on every request.
+
+## HTTP Caching Headers
+
+- `Cache-Control`: Origin tells CDNs how content should be cached and for how long with directives like public, private, max-age, s-maxage, immutable etc.
+- `ETag` and `Last Modified`: help with validation. They allow servers to return a `304 Not Modified` status with no body for a resource that has not changed.
+
+## Purging and Versioned URLs
+
+- TTLs are valid here too just like any other cache. Appropriate TTL important
+- But sometimes you can't wait for this TTL to expire like a wrong image pushed to CDN servers.
+
+1. Purging allows you to invalidate a cached object. CDN removes or stops serving the old copy and the next request will refresh the cache. However, this can take time to propagate and more cache misses.
+2. Versioned URLs:
+    - Instead of replacing `logo.png`, publish `logo.v2.png` and the new URL creates a new cache entry.
+    - the build system itself can generate a new file whenever the content changes like `app.3jd2.js`. When file changes, hash changes, and a new deployment references a new URL.
+
+## How CDN routing works
+
+- CDN routing directs a user's web request to the closest _or most efficient_ edge server to minimize latency.
+- DNS based routing: When the user looks up the CDN hostname, the CDN's DNS returns the IP of the edge server, based on the user's geographic location
+- BGP Anycast routing: Many edge locations advertise the same IP and the internet routing sends the request forward to a nearby location
+
+## Important Terms
+
+1. Pull Model: Similar to a cache-aside mode. Edge server populated only when someone requests for it. First request can be slow but its simple.
+2. Push Model: The application uploads the content to the CDN _before_ someone requests for it. The CDN distributes that content across its network.
+3. Cache Stampedes: The act of a popular object expiring across all edge servers, increasing the traffic to the origin. Can be reduced by:
+    - TTL Jitter: Add small random buffer to expiration times so many copies don't expire together.
+    - Origin Shield: Placed like another cache layer between the edge servers and origin which absorbs these requests and fetches data from the origin only once.
+    - stale-while-revalidate: Directive in the HTTP Cache-Control header that allows to serve stale data while its being refreshed.
+
+4. Example CDN Providers: Akamai, Cloudflare, Amazon CloudFront
