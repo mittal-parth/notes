@@ -108,3 +108,48 @@ Messaging pattern with 3 main parts:
 - Eventual consistency: because subscribers process events async, diff parts of the system may not be updated at the same time.
 - No immediate response
 - Harder debugging
+
+# Message Queues
+
+- It is a buffer that sits between two services:
+    - Producers: are services that create work
+    - Consumers: are services that do the work
+
+![](./images/queue.png)
+
+## Scaling
+
+- Add more consumers. Called as competing consumers pattern
+- Queue Depth: # of msgs waiting to be processed. if too high, add more consumers.
+- **prefetch** multiple msgs in a single call to reduce n/w round trip. although if one consumer grabs many msgs while others are idle, that can also lead to a bottleneck.
+- Queues also help protect the system from sudden spikes in traffic
+
+## Poison Messages and Dead Letter Queues
+
+- A problematic message (due to the file being corrupted for example) might be retried and put back into the queue forever. Such messages are called poison messages.
+- Solution? Put a retry limit.
+- Beyond the retry limit, move the message into a separate dead-letter queue (DLQ). This keeps the problematic message from interfering with normal processing. Messages inside this can be inspected and retried later.
+
+## Message ordering
+
+- Even through the word queue suggests, FIFO, it does not guarantee the same.
+- One worker might have picked message 1 which took a much longer time than message 2 being picked and processed. 
+- Retries can also change the processing order.
+- But sometimes strict ordering is needed. In such scenarios, group related messages with IDs.
+- So msgs from the same group (like a particular order) are processed in order while other messages can be processed in parallel.
+
+## Designing messages
+
+- Keep them small. Eg: include link to file object in S3 instead of the file.
+- Include a unique ID to detect duplicates.
+- Versioning
+- Message type
+
+## When to use
+
+When tasks are slow, resource-intensive, or don't need to finish before the user receives a response.
+
+- Processing Webhook events
+- Sending emails and notifs
+- Processing images and videos
+- Generating reports
