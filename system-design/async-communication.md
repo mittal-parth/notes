@@ -153,3 +153,80 @@ When tasks are slow, resource-intensive, or don't need to finish before the user
 - Sending emails and notifs
 - Processing images and videos
 - Generating reports
+
+# Change Data Capture
+
+- Data from the source DB might need to show up in other places too. CDC is a technique to efficiently publish those changes and update other systems
+- Capturing changes to the DB and sending it to other systems as they happen.
+- Turns database changes (like row inserted, updated, etc) into change events
+
+## How it works
+
+1. Capture: Detect **committed* changes from the source DB
+2. Build events: Create change events
+3. Publish: Publish the event onto a queue, topic, or any other system for consumption
+4. Consume: Other systems read the events and update their own data
+
+## CDC Approaches
+
+1. Timestamp based
+
+- Use an `updated_at` column to find changed rows
+- Pros: 
+    - Simple
+- Cons:
+    - Still polling
+    - If a row changes three times between polls, you may only see the final value.
+    - Use soft deletes. Hard deletes will remove the row and you will never capture the change
+
+2. Trigger based
+
+- Use DB triggers to add changes into an outbox table (txn outbox pattern)
+
+- Pros: 
+    - Can capture deletes
+    - Useful for audit tables and txn outbox pattern
+    - Useful when txn logs are hard to access
+
+- Cons:
+    - Tightly coupled with the application write code. On a busy table, this extra work can slow down the overall write speed
+    - Harder to maintain. Table changes may also mean trigger changes.
+    - Wrong trigger code can stall the application writes.
+
+3. Log based
+
+- Use the DB transaction log which the DB already uses for restoration.
+- Preferred for many high volume systems
+- Eg: Debezium (OSS)
+
+- Pros: 
+    - FB already writes these as part of normal operation
+    - Less impact on application than triggers.
+    - Better scaling
+- Cons:
+    - Setup and ongoing care
+    - Need DB specific settings, safe permissions 
+
+## CDC v/s Events
+
+- CDC capture every change
+- Events capture the final state. An `OrderPlaced` event while CDC might have captured the orders, payments, audit etc tables updated.
+- Outbox pattern still applicable. You can connect a CDC connector to the outbox table to replicate changes.
+
+## Use cases
+
+- Replication
+- Audit
+- Cache Invalidation
+- Data warehousing / analytics
+- Search indexing: update ElasticSearch as and when DB value updated
+
+## Challenges
+
+- Lag
+- Ordering: ordering can change when source uses partitions, or events processed by many workers.
+- Handling deletes: Discussed in timestamp based CDC. Use appropriate method like tombstone event, soft delete, etc to handle delete events.
+- Schema Evolution: changes in schema should not break CDC events. Prefer additive changes, versions, 
+- Initial snapshot: systems need a starting point after which the new events can be streamed. This snapshot could be big requiring time.
+- Security and Privacy: CDC events might expose columns that weren't meant to be. Mask, include only what's needed, encrypt data, apply retention rules.
+- Log retention: what if CDC connectors dies for a big enough time that logs are not retained. Might need to start again from a snapshot.
