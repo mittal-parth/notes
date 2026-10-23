@@ -15,6 +15,15 @@ Common patterns like load balancing, caching, async processing, and database opt
     - Pros: exactly reverse of vertical cons
     - Cons: exact opposite, data consistency, stateless requirement
 
+- Decision frame work to choose between them:
+    1. Find the bottleneck
+    2. Remove obvious waste - slow queries, missing indexes etc.
+    3. Scale vertically when it gives quick gains
+    4. Scale horizontally when you need to survive failures, handle bursts.
+    5. Protect shared dependencies - add rate limits, connection limits, etc
+    6. Re-test under actual load.
+    
+
 ### Stateless vs Stateful services
 
 - In the *stateful* model, once a user's session is stored on Server 1, all their requests must go to that same server. => SPF
