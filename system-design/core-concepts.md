@@ -26,14 +26,23 @@ Common patterns like load balancing, caching, async processing, and database opt
 
 ### Stateless vs Stateful services
 
-- In the *stateful* model, once a user's session is stored on Server 1, all their requests must go to that same server. => SPF
-- In the *stateless* model, session data lives in a shared store like Redis, so any server can handle any request. The load balancer has complete freedom to distribute traffic.
-
-How to make service stateless?
-
-1. Store session data in a shared cache 
-2. Use JWT instead of service side sessions
-3. Store files in object storage instead of local disk
+- **Stateful**: 
+    - Request retains some info from the past request, making future interactions dependent on past state.
+    - Stores the state in-memory or in a DB
+    - Types: 
+        1. Sticky sessions: each request goes to the same server since its stored in memory. LB decides where to send.
+        2. Centralised session store: Session data is stored in a centralized location like Redis so all servers can use it. Each request now go to any server.
+    - Use cases: Shopping carts, messaging apps, OTT (recommendations, history)
+    - Advgs: Contextual continuity, reduced round trips, personalized exp
+    - Challenges: Scalability, SPF, complexity, more memory
+- **Stateless**: 
+    - Each request contains all the necessary info and does not know about the previous requests. Can go to amy server.
+    - Common Patterns: 
+        1. JWT: user logs in once, server issues a signed JWT. Client includes this as a bearer token in each request thereafter. Server validates it without needing to store the session.
+        2. Idempotent APIs
+    - Use cases: Public APIs, microservices, Mobile Apps, CDN (caching is easier)
+    - Advgs: Scalability, caching is easier, less memory, simplicity, no SPF
+    - Disadvgs: Larger payloads, client side complexity, les context
 
 ## Scaling Components 
 
