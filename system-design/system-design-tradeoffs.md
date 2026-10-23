@@ -17,3 +17,12 @@ Covered in [Core Concepts](./core-concepts.md#scalability)
 
 ![](./images/concurrency-parallelism.png)
 
+# Websockets v/s long polling
+
+Covered in [API fundamentals](./api-fundamentals.md#websockets)
+
+# Batch Processing v/s Stream Processing
+
+![](./images/batch-stream-processing.png)
+
+# Sta
