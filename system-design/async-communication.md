@@ -255,7 +255,7 @@ When tasks are slow, resource-intensive, or don't need to finish before the user
 
 ### Automatic Reg by Orchestrators
 
-- Orchestrators like Kuberneteers handle this lifecycle automatically
+- Orchestrators like Kubernetes handle this lifecycle automatically
 - It assigns it a IP and port and registers it with the service registry (and also update whenever)
 
 ### Configuration Management Systems
@@ -265,3 +265,42 @@ When tasks are slow, resource-intensive, or don't need to finish before the user
 ## Types of Service Discovery
 
 ![](./images/service-discovery-types.png)
+
+# Consensus Algorithms
+
+- Consensus is how a group of machines chooses one decision, even when some machines fail and some messages arrive late.
+- A consensus algo guarantees *AVT*: 
+    - Agreement: healthy nodes do not choose diff values
+    - Validity: the chosen value must be the one that someone proposed 
+    - Termination: healthy nodes eventually finish and choose a value
+- Agreement and Validity are 'Safety' guarantees meaning 'dont do the wrong thing'
+- Termination is a 'Liveness' guarantee, meaning 'eventually do something'
+
+## Crash Fault Algos
+
+In this scenario, one or more nodes have crashed 
+### Paxos
+
+[Video](https://www.youtube.com/watch?v=w9FJ5gp5DSc)
+
+- Instances have three roles:
+    1. Proposer: 'proposes' a change sent from a client (eg: insert 10:joe) to the acceptor nodes and coordinates it
+    2. Acceptor: promise / accept the change from the proposer
+    3. Followers: just follow acceptor and proposer (not that relevant)
+
+![](./images/paxos.png)
+
+### RAFT
+
+![Video](https://www.youtube.com/watch?v=Ry2fIFIThP8)
+
+![](./images/raft.jpg)
+
+## Byzantine Fault Tolerance
+
+In this scenario, one or more nodes have gone rogue / may send misleading data.
+
+![](./images/pbft.jpg)
+
+# Distributed Locking
+
