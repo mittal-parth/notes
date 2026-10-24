@@ -230,3 +230,38 @@ When tasks are slow, resource-intensive, or don't need to finish before the user
 - Initial snapshot: systems need a starting point after which the new events can be streamed. This snapshot could be big requiring time.
 - Security and Privacy: CDC events might expose columns that weren't meant to be. Mask, include only what's needed, encrypt data, apply retention rules.
 - Log retention: what if CDC connectors dies for a big enough time that logs are not retained. Might need to start again from a snapshot.
+
+# Service Discovery
+
+- Mechanism that allows different services to find and communicate with other services in a distributed system.
+- Service discovery registers and maintains a record of all services in a service registry.
+- Needed when there is a large number of microservices, accommodate dynamic changes, less manual config.
+
+## Service Reg Options
+
+### Manual
+
+- Add details to service registry manually by a developer
+- Not scalable
+
+### Self-Registration
+
+- Each service is responsible for registering itself when it starts
+
+### Third-Party Reg (Sidecar pattern)
+
+- A dedicated sidecar process registers the service with the registry.
+- It may be running alongside the service itself, detect the service and registers it on its behalf.
+
+### Automatic Reg by Orchestrators
+
+- Orchestrators like Kuberneteers handle this lifecycle automatically
+- It assigns it a IP and port and registers it with the service registry (and also update whenever)
+
+### Configuration Management Systems
+
+- Specific services like Ansible, Chef, etc to register services which manage the lifecycle
+
+## Types of Service Discovery
+
+![](./images/service-discovery-types.png)
