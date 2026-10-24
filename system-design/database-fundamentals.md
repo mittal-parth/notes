@@ -130,3 +130,40 @@ Choose no sql if:
     - presentation layer (tier-1): user interface /client
     - business layer (tier-2): controller
     - DB layer (tier-3): physical data storage
+
+# Database Indexes
+
+Separate data structure that helps DB find rows without a full table scan.
+
+Most DBs use a B-Tree or a B-Tree+.
+
+## How a B-Tree index works
+
+- B-Trees are an extension to binary trees. A node in a binary tree has utmost 2 children. Values left of the node are smaller and values to the right are larger.
+- An m-way search tree is a tree where there can be utmost m children and thereby m-1 keys.
+- A B-Tree is a m-way search tree with explicit rules for insertion. It can have a variable number of keys in a node. Eg: 4 keys => 5 children. Each key has a child pointer and a record pointer.
+- Rules for insertion:
+    - min m/2 children for each node except root node which can have min 2 children
+    - all leaves must be at the same level
+    - creation is bottom up
+- B-Trees allow multi-level indexing.
+- So similar to binary tree, we would check if the value to compare lies to the left, right or middle (or in between the keys if we have more keys) and continue towards the leaves. While insertion and deletion, the rules of insertion have to be respected and might then require splitting the node into more nodes. [Ref](https://youtu.be/K1a2Bk8NrYQ?si=ds-WaRARb2TvWyTu)
+- In a B+Tree, record pointers are only from leaf nodes. Every non leaf key will then have its copy in one of the leaf nodes and leaves are connected like a linked list.
+
+## Composite Index
+
+- Index can be on two or more columns also
+- Leftmost prefix rule: its read from left to right. 
+- Suppose we have an index on three columns: (country, city, created_at). This index is primarily organized by country. Within each country, it is organized by city. And within each city, by created_at.
+
+## Covering Index
+
+- An index that covers every column that the query needs.
+- Should be designed with care as large indexes take more space.
+
+## Selectivity
+
+- A column like `status` or boolean will not offer a lot of benefit with indexing since it only has few possibilities anyways. A scan will still match of the table with the index.
+- Indexes are generally most valuable when they help the database narrow the result set significantly.
+
+# Sharding
