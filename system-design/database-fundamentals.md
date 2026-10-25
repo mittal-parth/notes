@@ -167,3 +167,62 @@ Most DBs use a B-Tree or a B-Tree+.
 - Indexes are generally most valuable when they help the database narrow the result set significantly.
 
 # Sharding
+
+- Splitting a large dataset across multiple independent database instances. Each shard only stores a portion of the data.
+- vs Replication: replication does copying while sharding stores diff subsets of the data
+- vs Partitioning: partitioning involves splitting the tables within the same database. In sharding, data is distributed across multiple servers.
+- A good shard key: 
+    - spreads data and traffic evenly
+    - makes common queries easier to route
+
+## Types
+
+### Range Based
+
+- simple. Divide the space into ranges and assign each range to a shard.
+- User ID: 1->100K shard 1, 100K+1->200K shard 2 and so on
+- Advgs: 
+    - simple
+    - works well for range queries since they are closely related
+- Disadvgs: 
+    - traffic may not be evenly distributed and we'll get hot shards (one overloaded shard while others are idle). Like new user ids will always hit the same shard or a popular account
+
+### Hash based
+
+- Apply a hash fn to the shard key and map the result to one of the shards.
+- `shard = hash(user_id) % number_of_shards`
+- Exact opposite advgs and disadvgs:
+    - Spreads traffic evenly
+    - But range queries now involve every shard since close values will be spread
+
+### Directory based
+
+- Here the system maintains a separate lookup table which has a map of data -> shard.
+
+- Advgs:
+    - flexibility. can move data around without the key changing
+- Disadvgs:
+    - separate piece of infra to maintain which must be fast and highly available
+    - spf
+
+## Querying
+
+- Need a query router now which routes the request to the correct shard. Could be application, DB, a proxy etc.
+- Sometimes you need to go to multiple shard and combine the results. Such queries are called cross-shard queries.
+- Type of cross-shard query is a scatter-gather query where you broadcast it to every shard and then combine the results.
+- For cross shard transactions, we need a distributed txn protocol like Saga. Avoid cross shard txns in the first place with a good shard key.
+- Re-sharding might be required in the long run which may add nodes and also move data. Refer Consistent Hashing.
+
+## When to shard
+
+Before sharding a database, it is worth exhausting simpler options:
+
+1. Optimize slow queries.
+2. Add indexes.
+3. Introduce caching.
+4. Scale the database vertically.
+5. Move read traffic to replicas.
+6. Archive old data.
+7. Partition large tables inside the database.
+
+Sharding becomes useful when one database can no longer handle the dataset or the write workload efficiently, and the application needs to scale horizontally.
