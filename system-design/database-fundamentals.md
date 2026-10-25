@@ -189,11 +189,20 @@ Most DBs use a B-Tree or a B-Tree+.
 
 ### Hash based
 
+#### Modulo Hashing
+
 - Apply a hash fn to the shard key and map the result to one of the shards.
 - `shard = hash(user_id) % number_of_shards`
 - Exact opposite advgs and disadvgs:
     - Spreads traffic evenly
     - But range queries now involve every shard since close values will be spread
+    - Adding and removing nodes will result in almost entire redistribution of data because the denominator will change. For that consistent hashing
+
+#### Consistent Hashing
+
+- Solves the redistribution problem with modulo hashing by arranging data in a hash ring
+
+![](./images/consistent-hashing.jpg)
 
 ### Directory based
 
