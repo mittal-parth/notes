@@ -326,3 +326,21 @@ The better question is to ask which operation. Diff operations of a system might
     Else (E), choose between latency (L) and consistency (C).
 - Serving from cache is faster, querying a vector index is faster than rebuilding embeddings synchronously after every doc update.
 - CAP explains the hard limit under partition. PACELC explains why consistency still costs latency when the network is healthy.
+
+# Framework to approach a problem
+
+1. Requirements Clarification
+    - Functional: features - what to focus on and not to focus on
+    - Non-functional: scale, traffic patterns, latency, correctness and consistency, data retention 
+2. Estimation
+    - QPS (traffic) - Reads / sec, Writes / sec. Round off heavily. 
+    - Storage - add up DB attributes (like 4 bytes for an integer)
+    - Based on this lot of stuff will get clarified like read heavy, write heavy etc
+3. API Design: 
+    - Main APIs, req, resp
+    - Use cursor and limit for list based APIs
+4. High Level Design
+    - Actual diagram, go step by step discussing the bottlenecks and improving
+5. DB Design
+6. Deep Dives based on interviewer's requirements
+7. Summary
