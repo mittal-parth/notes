@@ -235,3 +235,7 @@ Before sharding a database, it is worth exhausting simpler options:
 7. Partition large tables inside the database.
 
 Sharding becomes useful when one database can no longer handle the dataset or the write workload efficiently, and the application needs to scale horizontally.
+
+# Bloom Filters
+
+![](./images/bloom-filters.jpg)
